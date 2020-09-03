@@ -2,3 +2,4 @@
 final-model/irrelavant_models/bdcn_pretrained_on_nyudv2_depth.pth
 final-model/irrelavant_models/bdcn_pretrained_on_nyudv2_rgb.pth
 final-model/irrelavant_models/best.pth
+checkpoints/FeFlow.ckpt
