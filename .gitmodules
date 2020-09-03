@@ -1,0 +1,3 @@
+[submodule "ThirdParty/FeatureFlow"]
+	path = ThirdParty/FeatureFlow
+	url = https://github.com/RNubla/FeatureFlow.git

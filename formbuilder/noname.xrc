@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxFrame" name="mainFrame">
+		<style>wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL</style>
+		<size>660,400</size>
+		<title>FeFlow App</title>
+		<centered>1</centered>
+		<aui_managed>0</aui_managed>
+		<object class="wxMenuBar" name="mainMenuBar">
+			<label>MenuBar</label>
+			<object class="wxMenu" name="fileMenu">
+				<label>File</label>
+				<object class="wxMenuItem" name="exitMenuItem">
+					<label>Quit</label>
+					<help></help>
+				</object>
+			</object>
+			<object class="wxMenu" name="helpMenu">
+				<label>Help</label>
+				<object class="wxMenuItem" name="aboutMenuItem">
+					<label>About</label>
+					<help></help>
+				</object>
+			</object>
+		</object>
+		<object class="wxNotebook" name="mainNotebook">
+			<object class="notebookpage">
+				<label>Main</label>
+				<selected>1</selected>
+				<object class="wxPanel" name="mainPanel">
+					<style>wxTAB_TRAVERSAL</style>
+					<object class="wxGridBagSizer">
+						<vgap>0</vgap>
+						<hgap>0</hgap>
+						<growablecols></growablecols>
+						<growablerows></growablerows>
+						<object class="sizeritem">
+							<cellpos>0,0</cellpos>
+							<cellspan>1,1</cellspan>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="videoSupportLabel">
+								<style>wxALIGN_LEFT</style>
+								<pos>0,0</pos>
+								<label>Videos Support from 640x720</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>1,0</cellpos>
+							<cellspan>1,1</cellspan>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="interpLabel">
+								<label>Interpolation</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>2,0</cellpos>
+							<cellspan>1,1</cellspan>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="inputVidLabel">
+								<label>Input Video</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>2,1</cellpos>
+							<cellspan>1,5</cellspan>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxFilePickerCtrl" name="videoFilePicker">
+								<value></value>
+								<message>Select a video file</message>
+								<wildcard>MP4 source (*.mp4)|*.mp4||</wildcard>
+								<style>wxFLP_CHANGE_DIR|wxFLP_DEFAULT_STYLE|wxFLP_OPEN|wxFLP_USE_TEXTCTRL</style>
+								<size>400,-1</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>3,0</cellpos>
+							<cellspan>1,1</cellspan>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="outputDirLabel">
+								<label>Output Directory</label>
+								<wrap>-1</wrap>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>3,1</cellpos>
+							<cellspan>1,4</cellspan>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxDirPickerCtrl" name="outputDirPicker">
+								<value></value>
+								<message>Select output directory</message>
+								<style>wxDIRP_DEFAULT_STYLE</style>
+								<size>400,-1</size>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>5,2</cellpos>
+							<cellspan>1,1</cellspan>
+							<flag>wxALL|wxALIGN_BOTTOM</flag>
+							<border>5</border>
+							<object class="wxButton" name="RunBtn">
+								<tooltip>Run FeFlow</tooltip>
+								<label>Run</label>
+								<default>0</default>
+								<markup>0</markup>
+								<bitmap />
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>6,0</cellpos>
+							<cellspan>1,3</cellspan>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxGauge" name="progressBar">
+								<style>wxGA_HORIZONTAL|wxGA_SMOOTH</style>
+								<size>600,20</size>
+								<range>100</range>
+								<value>0</value>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>5,1</cellpos>
+							<cellspan>1,1</cellspan>
+							<flag>wxALL|wxALIGN_RIGHT</flag>
+							<border>5</border>
+							<object class="wxButton" name="CancelBtn">
+								<label>Cancel</label>
+								<default>0</default>
+								<markup>0</markup>
+								<bitmap />
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>4,1</cellpos>
+							<cellspan>1,3</cellspan>
+							<flag>wxEXPAND</flag>
+							<border>5</border>
+							<object class="wxStaticBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<label>Options</label>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALL</flag>
+									<border>5</border>
+									<object class="wxCheckBox" name="removeDupFrameCB">
+										<tooltip>This will removed any duplicate frames from the input video</tooltip>
+										<label>Remove Duplicate Frame [PLACEHOLDER]</label>
+										<checked>0</checked>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALL</flag>
+									<border>5</border>
+									<object class="wxCheckBox" name="placeHolder">
+										<label>Do not Interpolate Scene Changes [PLACEHOLDER]</label>
+										<checked>0</checked>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<cellpos>1,1</cellpos>
+							<cellspan>1,1</cellspan>
+							<flag>wxEXPAND</flag>
+							<border>5</border>
+							<object class="wxGridBagSizer">
+								<vgap>0</vgap>
+								<hgap>0</hgap>
+								<growablecols></growablecols>
+								<growablerows></growablerows>
+								<object class="sizeritem">
+									<cellpos>1,1</cellpos>
+									<cellspan>1,1</cellspan>
+									<flag>wxALL</flag>
+									<border>5</border>
+									<object class="wxChoice" name="interpolationChoice">
+										<pos>-1,-1</pos>
+										<size>100,-1</size>
+										<tooltip>Choose Interpolation</tooltip>
+										<selection>0</selection>
+										<content>
+											<item>2x</item>
+											<item>4x</item>
+											<item>8x</item>
+										</content>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<cellpos>1,2</cellpos>
+									<cellspan>1,1</cellspan>
+									<flag>wxALL</flag>
+									<border>5</border>
+									<object class="wxTextCtrl" name="interpFPSTextCtrl">
+										<tooltip>Output Frame Rate</tooltip>
+										<value></value>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<cellpos>0,1</cellpos>
+									<cellspan>1,1</cellspan>
+									<flag>wxALL</flag>
+									<border>5</border>
+									<object class="wxStaticText" name="ogFPSLabel">
+										<label>Original FPS</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<cellpos>0,2</cellpos>
+									<cellspan>1,1</cellspan>
+									<flag>wxALL</flag>
+									<border>5</border>
+									<object class="wxTextCtrl" name="ogFPSTextCtrl">
+										<tooltip>Original Frame Rate</tooltip>
+										<value></value>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="notebookpage">
+				<label>Beta [TecoGan]</label>
+				<selected>0</selected>
+				<object class="wxPanel" name="resolutionScale">
+					<style>wxTAB_TRAVERSAL</style>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
