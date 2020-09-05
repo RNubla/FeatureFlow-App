@@ -7,10 +7,13 @@ from pathlib import Path
 
 # from numpy.core.arrayprint import str_format
 # from sequence_run import main, getInterpolationIndex, getInterpolationRange, getIteration
-from featureflow_runner import main, getInterpolationIndex, getInterpolationRange, getIteration
+# from featureflow_runner import Runner, getInterpolationIndex, getInterpolationRange, getIteration
+from featureflow_runner import FeatureFlowRunner as FFR
+# from featureflow_runner import SettersGetterIndex as interpIndex
+# from featureflow_runner import getInterpolationIndex, getInterpolationRange, getIteration
 import cv2
 
-ffmpeg_exe = Path().cwd() / 'bin/ffmpeg.exe'
+ffmpeg_exe = Path().cwd() / 'ffmpeg.exe'
 
 
 class FrameRate:
@@ -33,18 +36,6 @@ class CheckResolution:
         height = self.vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
         return int(height)
 
-
-class InformationGetters:
-    def iterationCount() -> int:
-        return getIteration()
-
-    def interpolationIndex() -> int:
-        return int(getInterpolationIndex())
-
-    def interpolationRange() -> int:
-        return int(getInterpolationRange())
-
-
 class VideoDecimation:
     def __init__(self, input_path_from_gui: str, output_path_from_gui: str):
         self. current_working_dir: str = Path.cwd()
@@ -64,7 +55,7 @@ class VideoDecimation:
 
 
 class Resolution360p:
-    def __init__(self, file_input_path_from_gui: str, interpolation: int, output_path_from_gui: str):
+    def __init__(self, file_input_path_from_gui: str, interpolation: int, output_path_from_gui: str, interpIndex, interpRange):
         self.current_working_dir: str = Path.cwd()
         self.input_video: str = file_input_path_from_gui
         self.video_name: str = os.path.splitext(os.path.basename(file_input_path_from_gui))[
@@ -72,18 +63,28 @@ class Resolution360p:
         self.interp_num: int = interpolation
         self.output_path: str = output_path_from_gui
 
+        self.index = interpIndex
+        self.range = interpRange
+
         self.finished_file_name: str = Path.cwd() / str(self.video_name + '-final.mp4')
-        self.interp_output_file_name: str = Path.cwd() / 'output.mp4'
+        self.interp_output_file_name: str = str(Path.cwd() / 'output.mp4')
+
+        self.run = FFR()
 
     def runFeatureFlow(self):
         print(self.interp_num)
         print('Input Video: ', (self.input_video))
+        # run = FFR()
 
-        main(self.interp_num, self.input_video)
+        # FFR.__init__(self)
+        self.run.Runner(self.interp_num, self.input_video, self.output_path, self.index, self.range)
 
         print(Path(self.interp_output_file_name) / Path(self.output_path))
+        print('CDW: ',Path.cwd())
+        print('output_file_name: ',self.interp_output_file_name)
+
         time.sleep(3)
-        shutil.move('output.mp4', str(Path(self.output_path) /
+        shutil.move(self.interp_output_file_name, str(Path(self.output_path) /
                                       '{}-final.mp4'.format(self.video_name)))
 
     def deleteFiles(self):
@@ -96,7 +97,7 @@ class Resolution360p:
 
 
 class Resolution720p:
-    def __init__(self, file_input_path_from_gui: str, interpolation: int, output_path_from_gui: str):
+    def __init__(self, file_input_path_from_gui: str, interpolation: int, output_path_from_gui: str, interpIndex, interpRange):
         self.current_working_dir: str = Path.cwd()
         self.input_video: str = file_input_path_from_gui
         self.video_name: str = os.path.splitext(os.path.basename(self.input_video))[
@@ -106,6 +107,11 @@ class Resolution720p:
 
         self.finished_file_name: str = Path.cwd() / str(self.video_name + '-final.mp4')
         self.interp_output_file_name: str = Path.cwd() / 'output.mp4'
+
+        self.index = interpIndex
+        self.range = interpRange
+
+        self.run = FFR()
 
     def splitVideoIntoSections(self):
         print('Video Name: ', self.video_name)
@@ -126,27 +132,21 @@ class Resolution720p:
 
     def runFeatureFlow(self):
         input_split_files = [str(Path(self.output_path) / '{}-top-left.mp4'.format(self.video_name)),
-                             str(Path(self.output_path) /
-                                 '{}-top-right.mp4'.format(self.video_name)),
-                             str(Path(self.output_path) /
-                                 '{}-bottom-left.mp4'.format(self.video_name)),
-                             str(Path(self.output_path) /
-                                 '{}-bottom-right.mp4'.format(self.video_name))
+                             str(Path(self.output_path) / '{}-top-right.mp4'.format(self.video_name)),
+                             str(Path(self.output_path) / '{}-bottom-left.mp4'.format(self.video_name)),
+                             str(Path(self.output_path) / '{}-bottom-right.mp4'.format(self.video_name))
                              ]
 
         for video in input_split_files:
             print(video)
-            main(self.interp_num, video)
+            self.run.Runner(self.interp_num, video, str(Path(self.output_path)), self.index, self.range)
             shutil.move('output.mp4', video)
 
     def stitchVideo(self):
         input_split_files = [str(Path(self.output_path) / '{}-top-left.mp4'.format(self.video_name)),
-                             str(Path(self.output_path) /
-                                 '{}-top-right.mp4'.format(self.video_name)),
-                             str(Path(self.output_path) /
-                                 '{}-bottom-left.mp4'.format(self.video_name)),
-                             str(Path(self.output_path) /
-                                 '{}-bottom-right.mp4'.format(self.video_name))
+                             str(Path(self.output_path) / '{}-top-right.mp4'.format(self.video_name)),
+                             str(Path(self.output_path) / '{}-bottom-left.mp4'.format(self.video_name)),
+                             str(Path(self.output_path) / '{}-bottom-right.mp4'.format(self.video_name))
                              ]
         os.system(str(ffmpeg_exe) +
                   ' -i ' + input_split_files[0] +
