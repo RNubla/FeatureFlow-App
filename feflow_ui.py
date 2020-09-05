@@ -1,14 +1,58 @@
+from ThirdParty.FeatureFlow.sequence_run import getInterpolationRange
+from textwrap import indent
+from numpy.lib.utils import info
 import wx
 from wx import xrc
 import wx.adv
 from pathlib import Path
 import threading
 
-from feature_flow_interface import CheckResolution, Resolution720p, Resolution360p, InformationGetters, FrameRate
+from feature_flow_interface import CheckResolution, Resolution720p, Resolution360p, FrameRate
+from indexAndRangeGetters import SettersGetterIndex, SettersGetterRange, SettersGetterIteration
 
+indexObj = SettersGetterIndex()
+rangeObj = SettersGetterRange()
+
+class myThread (threading.Thread):
+    def __init__(self, threadID, name, inputFile, outputPath, interpNum):
+       threading.Thread.__init__(self)
+       self.threadID = threadID
+       self.name = name
+       self.inputFile = inputFile
+       self.outputPath = outputPath
+       self.interpNum = interpNum
+    
+    def completeDialog(self):
+        wx.MessageBox('Feature Flow has finished interpolating your video. \n Please check your output directory',
+                      'Interpolation Complete', wx.OK | wx.ICON_EXCLAMATION)
+
+    def missingFileDialog(self):
+        wx.MessageBox('You have not selected an Input Video or and Output Directory. \n Please specify them',
+                      'Error', wx.OK | wx.ICON_ERROR)
+
+    def run(self):
+        index = SettersGetterIndex()
+        print('Index: ', index.getInterpolationIndex())
+        print ("Starting " + self.name)
+        if self.inputFile != '' and self.outputPath != '':
+            resolution = CheckResolution(self.inputFile)
+            if resolution.getWidth() < int(1280) and resolution.getHeight() < int(720):
+                interpolate360 = Resolution360p(self.inputFile, self.interpNum, self.outputPath, indexObj, rangeObj)
+                interpolate360.runFeatureFlow()
+                self.completeDialog()
+            else:
+                interpolate720 = Resolution720p(self.inputFile, self.interpNum, self.outputPath, indexObj, rangeObj)
+                interpolate720.splitVideoIntoSections()
+                interpolate720.runFeatureFlow()
+                interpolate720.stitchVideo()
+                self.completeDialog
+        else:
+            # self.missingFileDialog()
+            self.missDiaglog
+        print ("Exiting " + self.name)
 
 class FeFlowApp(wx.App):
-    def OnInit(self):
+    def OnInit(self, ):
         self.xrcFile: str = str(Path.cwd() / 'formbuilder' / 'noname.xrc')
         self.res = xrc.XmlResource(self.xrcFile)
         self.init_frame()
@@ -50,20 +94,7 @@ class FeFlowApp(wx.App):
                             self.onSelectOutputDir, id=xrc.XRCID('outputDirPicker'))
 
         self.runBtn = xrc.XRCCTRL(self.mainFrame, 'RunBtn')
-        self.mainFrame.Bind(
-            wx.EVT_BUTTON, self.applicationThreads, id=xrc.XRCID('RunBtn'))
-
-        # self.inProgressDialog = xrc.XRCCTRL(self.mainFrame, 'progressDialog')
-        # self.mainFrame.Bind(wx.EVT_BUTTON, self.showProgressBar, id=xrc.XRCID('progressDialog'))
-
-        self.statusBar = xrc.XRCCTRL(self.mainFrame, 'statusBar')
-        self.mainFrame.Bind(
-            wx.EVT_TEXT, self.showIterationCount, id=xrc.XRCID('statusBar'))
-
-        self.pbar = xrc.XRCCTRL(self.mainFrame, 'progressBar')
-        # self.mainFrame.Bind(wx.EVT_BUTTON, self.applicationThreads, id=xrc.XRCID('progressBar'))
-        self.mainFrame.Bind(
-            wx.EVT_BUTTON, self.applicationThreads, id=xrc.XRCID('progressBar'))
+        self.mainFrame.Bind(wx.EVT_BUTTON, self.applicationThreads, id=xrc.XRCID('RunBtn'))
 
         self.mainFrame.Show()
 
@@ -136,45 +167,23 @@ class FeFlowApp(wx.App):
         else:
             self.missingFileDialog()
 
-    def showProgressBar(self, cond):
-        print('Starting showProgressBar Thread')
-        t = threading.currentThread()
-        with cond:
-            cond.wait()
-            print('Resource is availabe to showProgressBar')
-            self.pbar.SetRange(InformationGetters.interpolationRange())
-            self.pbar.SetValue(InformationGetters.interpolationIndex())
-            print('Range: ', InformationGetters.interpolationRange())
-            # wx.ProgressDialog('Interpolation In Progress', 'Interpolating your video', maximum=100)
-
-    def fflowProducer(self, cond):
-        print('Starting Feature Flow Producer Thread')
-        with cond:
-            print('Making resource availale for showProgressBar')
-            # self.onRunFeatureFlow
-            cond.notifyAll()
-
-        # print('Range: ', InformationGetters.interpolationRange())
-        # print('Index: ', InformationGetters.interpolationIndex())
-        # progressDialog = wx.ProgressDialog('Interpolation In Progress', 'Interpolating your video', maximum=InformationGetters.interpolationRange)
-        # progressDialog.Update(InformationGetters.interpolationIndex)
-
     def applicationThreads(self, event):
-        # pbar = threading.Thread(name='Progress Bar', target=self.showProgressBar, args=(self.condition,))
-        # fflow = threading.Thread(name='FeatureFlow Producer', target=self.onRunFeatureFlow, args=(self.condition,))
-        # pbar.start()
-        # fflow.start()
-        runFeatureFlow = threading.Thread(
-            target=self.onRunFeatureFlow, args=(event,))
-        # progressBar = threading.Thread(target=self.showProgressBar, args=(event,))
-        runFeatureFlow.start()
-        # progressBar.start()
-        # progressBar.join()
-        # runFeatureFlow.join()
-
-    def showIterationCount(self):
-        iteration = InformationGetters.iterationCount()
-        self.statusBar.SetStatusText('Iteration: ', str(iteration))
+        fflowThread = myThread(1, "FeatureFlow", self.inputFile, self.outputPath, self.interpNum)
+        fflowThread.start()
+        counter = 0
+        dlg = wx.ProgressDialog('Interpolating Frames', 'Please wait..', style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
+        # dlg = wx.ProgressDialog('Interpolating Frames', 'Please wait..', style=wx.PD_APP_MODAL | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
+        while fflowThread.isAlive():
+            # print('HEEYY')
+            wx.MilliSleep(300)
+            # print(rangeObj.getInterpolationRange())
+            # dlg.Update(indexObj.getInterpolationIndex())
+            dlg.Pulse("Interpolation In Progress {} out of {}".format(indexObj.getInterpolationIndex(),rangeObj.getInterpolationRange()))
+            wx.GetApp().Yield()
+            # dlg.SetRange(rangeObj.getInterpolationRange())
+            counter += 1
+        del dlg
+        fflowThread.join()
 
 
 if __name__ == "__main__":
