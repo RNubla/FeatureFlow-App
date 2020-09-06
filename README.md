@@ -10,6 +10,11 @@ As of right now, it currently supports videos with a resolution of 640x360 and 1
 - [ ] Implement proSr or TecoGan
 - [ ] Use pyscenedectect for scence changes. This will prevent the application from interpolating between scene changes
 
+## Bugs
+
+- [ ] Does not show about menu
+- [ ] Does not terminate application when cancelling interpolation dialog box
+
 ## Git Command to pull submodule
 
 ```bash
