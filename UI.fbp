@@ -45,7 +45,7 @@
             <property name="minimum_size"></property>
             <property name="name">mainFrame</property>
             <property name="pos"></property>
-            <property name="size">660,370</property>
+            <property name="size">550,370</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass">; ; forward_declare</property>
             <property name="title">FeFlow App</property>
@@ -244,7 +244,7 @@
                                     <property name="vgap">0</property>
                                     <object class="gbsizeritem" expanded="0">
                                         <property name="border">5</property>
-                                        <property name="colspan">1</property>
+                                        <property name="colspan">2</property>
                                         <property name="column">0</property>
                                         <property name="flag">wxALL</property>
                                         <property name="row">0</property>
@@ -277,7 +277,7 @@
                                             <property name="gripper">0</property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Videos Support from 640x720</property>
+                                            <property name="label">File Resolution that are Supported from 640x360 and 1280x720</property>
                                             <property name="markup">0</property>
                                             <property name="max_size"></property>
                                             <property name="maximize_button">0</property>
