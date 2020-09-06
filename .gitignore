@@ -6,3 +6,6 @@ checkpoints/FeFlow.ckpt
 final-model/bdcn_pretrained_on_nyudv2_depth.pth
 final-model/bdcn_pretrained_on_nyudv2_rgb.pth
 /__pycache__
+/bin
+/build
+/FeatureFlow-App.spec
