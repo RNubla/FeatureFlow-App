@@ -14,6 +14,7 @@ As of right now, it currently supports videos with a resolution of 640x360 and 1
 
 - [ ] Does not show about menu
 - [ ] Does not terminate application when cancelling interpolation dialog box
+- [ ] Closed Repo
 
 ## Git Command to pull submodule
 
