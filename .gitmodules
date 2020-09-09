@@ -1,3 +1,6 @@
 [submodule "ThirdParty/FeatureFlow"]
 	path = ThirdParty/FeatureFlow
 	url = https://github.com/RNubla/FeatureFlow.git
+[submodule "ThirdParty/TecoGAN"]
+	path = ThirdParty/TecoGAN
+	url = https://github.com/RNubla/TecoGAN
