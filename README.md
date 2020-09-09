@@ -28,6 +28,10 @@ git submodule update --recursive --remote
 conda create -n open-mmlab python=3.7 -y
 conda activate open-mmlab
 conda install cudatoolkit=10.0 -y
+pip install tensorflow-gpu==1.15.0
+pip install ipython==7.4.0
+conda install -c conda-forge matplotlib
+pip install keras==2.1.2
 pip install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp37-cp37m-win_amd64.whl
 # pip install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp37-cp37m-win_amd64.whl #pytorch 1.1.0
 pip install torchvision==0.2.2.post3
