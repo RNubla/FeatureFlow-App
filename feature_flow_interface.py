@@ -1,40 +1,10 @@
-# %%
 import os
 import shutil
 import time
-# from os import pipe
 from pathlib import Path
-
-# from numpy.core.arrayprint import str_format
-# from sequence_run import main, getInterpolationIndex, getInterpolationRange, getIteration
-# from featureflow_runner import Runner, getInterpolationIndex, getInterpolationRange, getIteration
 from featureflow_runner import FeatureFlowRunner as FFR
-# from featureflow_runner import SettersGetterIndex as interpIndex
-# from featureflow_runner import getInterpolationIndex, getInterpolationRange, getIteration
-import cv2
 
 ffmpeg_exe = Path().cwd() / 'ffmpeg.exe'
-
-
-class FrameRate:
-    def getInitialFPS(videoName) -> float:
-        videoCap = cv2.VideoCapture(videoName)
-        fps: float = videoCap.get(cv2.CAP_PROP_FPS)
-        return float(fps)
-
-
-class CheckResolution:
-    def __init__(self, file_name):
-        self.file = file_name
-        self.vcap = cv2.VideoCapture(self.file)
-
-    def getWidth(self):
-        width = self.vcap.get(cv2.CAP_PROP_FRAME_WIDTH)
-        return int(width)
-
-    def getHeight(self):
-        height = self.vcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        return int(height)
 
 class VideoDecimation:
     def __init__(self, input_path_from_gui: str, output_path_from_gui: str):
@@ -58,8 +28,7 @@ class Resolution360p:
     def __init__(self, file_input_path_from_gui: str, interpolation: int, output_path_from_gui: str, interpIndex, interpRange):
         self.current_working_dir: str = Path.cwd()
         self.input_video: str = file_input_path_from_gui
-        self.video_name: str = os.path.splitext(os.path.basename(file_input_path_from_gui))[
-            0]   # returns file name from example.mp4 to example
+        self.video_name: str = os.path.splitext(os.path.basename(file_input_path_from_gui))[0]   # returns file name from example.mp4 to example
         self.interp_num: int = interpolation
         self.output_path: str = output_path_from_gui
 
@@ -74,18 +43,16 @@ class Resolution360p:
     def runFeatureFlow(self):
         print(self.interp_num)
         print('Input Video: ', (self.input_video))
-        # run = FFR()
 
-        # FFR.__init__(self)
         self.run.Runner(self.interp_num, self.input_video, self.output_path, self.index, self.range)
 
         print(Path(self.interp_output_file_name) / Path(self.output_path))
         print('CDW: ',Path.cwd())
         print('output_file_name: ',self.interp_output_file_name)
 
-        time.sleep(3)
-        shutil.move(self.interp_output_file_name, str(Path(self.output_path) /
-                                      '{}-final.mp4'.format(self.video_name)))
+        # time.sleep(3)
+        # shutil.move(self.interp_output_file_name, str(Path(self.output_path) /
+        #                               '{}-final.mp4'.format(self.video_name)))
 
     def deleteFiles(self):
         cwd = Path(self.current_working_dir)

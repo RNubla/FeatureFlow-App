@@ -1,4 +1,4 @@
-from ThirdParty.FeatureFlow.sequence_run import getInterpolationRange
+# from ThirdParty.FeatureFlow.sequence_run import getInterpolationRange
 from textwrap import indent
 from numpy.lib.utils import info
 import wx
@@ -6,8 +6,8 @@ from wx import xrc
 import wx.adv
 from pathlib import Path
 import threading
+from opencv_operations import FrameRate, CheckResolution
 
-from feature_flow_interface import CheckResolution, Resolution720p, Resolution360p, FrameRate
 from indexAndRangeGetters import SettersGetterIndex, SettersGetterRange, SettersGetterIteration
 
 indexObj = SettersGetterIndex()
@@ -23,6 +23,7 @@ class myThread (threading.Thread):
        self.interpNum = interpNum
 
     def run(self):
+        from feature_flow_interface import Resolution720p, Resolution360p
         index = SettersGetterIndex()
         print('Index: ', index.getInterpolationIndex())
         print ("Starting " + self.name)
