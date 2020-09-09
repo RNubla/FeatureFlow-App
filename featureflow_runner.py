@@ -3,7 +3,6 @@ from ThirdParty.FeatureFlow.feature_flow_interface import ffmpeg_exe
 from os.path import dirname
 from pathlib import Path
 import re
-import argparse
 import os
 import torch
 import cv2
@@ -13,29 +12,26 @@ from ThirdParty.FeatureFlow.src import pure_network as layers
 from tqdm import tqdm
 import numpy as np
 import math
-# from ThirdParty.FeatureFlow.models.bdcn import bdcn as bdcn
 from ThirdParty.FeatureFlow.models.bdcn import bdcn
-# from feflow_ui import IndexPro
 import shutil
 ffmpeg_exe = Path.cwd() / 'ffmpeg.exe'
 
 class FeatureFlowRunner:
     def __init__(self):
-        # self.cuda_enabled = cuda
-        # add cpu mode
-        # self.ffmpeg_exe = str(Path(__file__).resolve() / 'ffmpeg.exe')
         self.iteration : int
         self.interpolationIndex : int 
         self.interpolationRange : int 
         self.dir_path : str = ''
         self.imgt = None
+        self.interpolation = None
+        self.output_path : str = ''
         
-        self.bdcn = bdcn.BDCN()
-        self.bdcn.cuda()
-        self.structure_gen = layers.StructureGen(3)
-        self.structure_gen.cuda()
-        self.detail_enhance = layers.DetailEnhance()
-        self.detail_enhance.cuda()
+        # self.bdcn = bdcn.BDCN()
+        # self.bdcn.cuda()
+        # self.structure_gen = layers.StructureGen(3)
+        # self.structure_gen.cuda()
+        # self.detail_enhance = layers.DetailEnhance()
+        # self.detail_enhance.cuda()
 
         # # Channel wise mean calculated on adobe240-fps training dataset
         self.mean = [0.5, 0.5, 0.5]
@@ -61,6 +57,7 @@ class FeatureFlowRunner:
             return self.flipped_img.convert('RGB')
 
     def ToImage(self, frame0, frame1):
+        
         with torch.no_grad():
             self.img0 = frame0.cuda()
             self.img1 = frame1.cuda()
@@ -100,6 +97,14 @@ class FeatureFlowRunner:
         return [self.dir_path, length, self.fps]
 
     def Runner(self, interp : int, input_file : str, output_path: str, interpIndex, interpRange):
+        self.interpolation = interp
+        self.output_path = output_path
+        self.bdcn = bdcn.BDCN()
+        self.bdcn.cuda()
+        self.structure_gen = layers.StructureGen(3)
+        self.structure_gen.cuda()
+        self.detail_enhance = layers.DetailEnhance()
+        self.detail_enhance.cuda()
 
         cwd = Path(__file__).resolve()
         print('CWD: ',cwd.parent)
@@ -164,8 +169,9 @@ class FeatureFlowRunner:
                 self.imgt_np = self.imgt.squeeze(0).cpu().numpy()
                 self.imgt_png = np.uint8(((self.imgt_np + 1.0) / 2.0).transpose(1, 2, 0)[:, :, ::-1] * 255)
                 cv2.imwrite(self.out_arguement, self.imgt_png)
+                torch.cuda.empty_cache()
+    def imgToVideo(self):
         print('CWD FROM RUNNER: ', Path.cwd())
-        print(str(ffmpeg_exe) + " -framerate " + str(interp*self.fps) + " -i " + str(Path(output_path).parent) + '\\' + self.dir_path + '\\%10d.png' + ' -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4')
-        os.system( str(ffmpeg_exe) + " -framerate " + str(interp*self.fps) + " -i " + str(Path(output_path).parent) + '\\' + self.dir_path + '\\%10d.png' + ' -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4')
-        shutil.rmtree(self.dir_path)
-        torch.cuda.empty_cache()
+        print(str(ffmpeg_exe) + " -framerate " + str(self.interpolation*self.fps) + " -i " + str(Path(self.output_path).parent) + '\\' + self.dir_path + '\\%10d.png' + ' -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4')
+        os.system( str(ffmpeg_exe) + " -framerate " + str(self.interpolation*self.fps) + " -i " + str(Path(self.output_path).parent) + '\\' + self.dir_path + '\\%10d.png' + ' -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4')
+        # shutil.rmtree(self.dir_path)
