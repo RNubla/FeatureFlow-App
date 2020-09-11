@@ -14,6 +14,7 @@ import numpy as np
 import math
 from ThirdParty.FeatureFlow.models.bdcn import bdcn
 import shutil
+import json
 ffmpeg_exe = Path.cwd() / 'ffmpeg.exe'
 
 class FeatureFlowRunner:
@@ -25,6 +26,9 @@ class FeatureFlowRunner:
         self.imgt = None
         self.interpolation = None
         self.output_path : str = ''
+        self.input_video_file : str = ''
+        self.fps : int = None
+        self.interpData = None
         
         # self.bdcn = bdcn.BDCN()
         # self.bdcn.cuda()
@@ -78,7 +82,7 @@ class FeatureFlowRunner:
     
     def VideoToSequence(self, path, time):
         video = cv2.VideoCapture(path)
-        self.dir_path = 'frames_tmp'
+        self.dir_path = str(Path(self.output_path) / 'frames_tmp')
         if(Path(self.dir_path).exists()):
             shutil.rmtree(self.dir_path)
         os.mkdir(self.dir_path)
@@ -97,6 +101,7 @@ class FeatureFlowRunner:
         return [self.dir_path, length, self.fps]
 
     def Runner(self, interp : int, input_file : str, output_path: str, interpIndex, interpRange):
+        self.input_video_file = input_file
         self.interpolation = interp
         self.output_path = output_path
         self.bdcn = bdcn.BDCN()
@@ -131,7 +136,13 @@ class FeatureFlowRunner:
         PSNR = 0
         count = 0
             
-        [self.dir_path, self.frame_count, self.fps] = self.VideoToSequence(input_file, interp)
+        [self.dir_path, self.frame_count, self.fps] = self.VideoToSequence(self.input_video_file, interp)
+        self.interpData = {
+                    'name' : str(self.getVideoName()) ,
+                    'newFps' : str(self.getNewFps())
+        }
+        with open('interp_data.json', 'w', encoding='utf-8') as json_file:
+            json.dump(self.interpData, json_file, ensure_ascii=False, indent=4)
         for i in range(iter):
             print('processing iter' + str(i+1) + ', ' + str((i+1)*self.frame_count) + ' frames in total')
             # print('Iteration: ',iter)
@@ -170,8 +181,29 @@ class FeatureFlowRunner:
                 self.imgt_png = np.uint8(((self.imgt_np + 1.0) / 2.0).transpose(1, 2, 0)[:, :, ::-1] * 255)
                 cv2.imwrite(self.out_arguement, self.imgt_png)
                 torch.cuda.empty_cache()
+
+    def getNewFps(self):
+        return int(self.interpolation * self.fps)
+    def getVideoName(self):
+        return os.path.splitext(os.path.basename(self.input_video_file))[0]
+    
     def imgToVideo(self):
+        # from opencv_operations import FrameRate
+        # vidFps = FrameRate()
+        # print('Input vid file: ', self.input_video_file)
+        # vidFps.getInitialFPS(str(self.input_video_file))
+        # self.fps = vidFps
         print('CWD FROM RUNNER: ', Path.cwd())
         print(str(ffmpeg_exe) + " -framerate " + str(self.interpolation*self.fps) + " -i " + str(Path(self.output_path).parent) + '\\' + self.dir_path + '\\%10d.png' + ' -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4')
         os.system( str(ffmpeg_exe) + " -framerate " + str(self.interpolation*self.fps) + " -i " + str(Path(self.output_path).parent) + '\\' + self.dir_path + '\\%10d.png' + ' -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4')
+        # shutil.rmtree(self.dir_path)
+    def imgToVideoScaled(self, input_dir):
+        # from opencv_operations import FrameRate
+        # vidFps = FrameRate()
+        # print('Input vid file: ', self.input_video_file)
+        # vidFps.getInitialFPS(str(self.input_video_file))
+        # self.fps = vidFps
+        print('CWD FROM RUNNER: ', Path.cwd())
+        print(str(ffmpeg_exe) + " -framerate " + str(self.interpolation*self.fps) + " -i " + str(Path(self.output_path).parent) + '\\' + self.dir_path + '\\%10d.png' + ' -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4')
+        os.system( str(ffmpeg_exe) + " -framerate " + str(self.interpolation*self.fps) + " -i " + str(Path(self.output_path).parent) + '\\' + input_dir + '\\output_%10d.png' + ' -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4')
         # shutil.rmtree(self.dir_path)

@@ -19,6 +19,7 @@ As of right now, it currently supports videos with a resolution of 640x360 and 1
 ## Git Command to pull submodule
 
 ```bash
+git submodule add https://github.com/RNubla/TecoGAN
 git submodule update --recursive --remote
 ```
 
@@ -50,4 +51,8 @@ pip install scikit-image visdom tqdm prefetch-generator wxPython
 
 ```bash
 pyinstaller feflow_ui.py --distpath D:\Programming\Python\FeatureFlow-Build -n FeatureFlow-App -y --clean --add-data .\checkpoints\FeFlow.ckpt;.\checkpoints\ --add-data .\final-model\bdcn_pretrained_on_bsds500.pth;.\final-model\ --add-data .\formbuilder\noname.xrc;.\formbuilder\ --add-binary ffmpeg.exe;.
+
+
+
+pyinstaller feflow_ui.py --distpath D:\Programming\Python\FeatureFlow-Build -n FeatureFlow-TecoGAN-App -y --clean --add-data .\checkpoints\FeFlow.ckpt;.\checkpoints\ --add-data .\final-model\bdcn_pretrained_on_bsds500.pth;.\final-model\ --add-data .\formbuilder\noname.xrc;.\formbuilder\ --add-binary ffmpeg.exe;. --add-data .\final-model\TecoGAN.data-00000-of-00001;.\final-model\ --add-data .\final-model\TecoGAN.index;.\final-model\ --add-data .\final-model\TecoGAN.meta\;.\final-model\ --additional-hooks-dir=hooks
 ```

@@ -6,6 +6,7 @@ from featureflow_runner import FeatureFlowRunner as FFR
 
 ffmpeg_exe = Path().cwd() / 'ffmpeg.exe'
 
+
 class VideoDecimation:
     def __init__(self, input_path_from_gui: str, output_path_from_gui: str):
         self. current_working_dir: str = Path.cwd()
@@ -53,6 +54,8 @@ class Resolution360p:
         # time.sleep(3)
         # shutil.move(self.interp_output_file_name, str(Path(self.output_path) /
         #                               '{}-final.mp4'.format(self.video_name)))
+    def imageToVideo(self):
+        self.run.imgToVideo()
 
     def deleteFiles(self):
         cwd = Path(self.current_working_dir)
