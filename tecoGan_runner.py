@@ -1,20 +1,13 @@
-# from unittest import runner
-# import os, math, time, collections, numpy as np
-# import numpy as np
 import os, time, numpy as np
 import tensorflow as tf
 from tensorflow.python.util import deprecation
 import random as rn
-# import sys, shutil, subprocess
 
 from ThirdParty.TecoGAN.lib.ops import *
-# from ThirdParty.TecoGAN.lib.dataloader import inference_data_loader, frvsr_gpu_data_loader
 from ThirdParty.TecoGAN.lib.dataloader import inference_data_loader
 from ThirdParty.TecoGAN.lib.frvsr import generator_F, fnet
-from ThirdParty.TecoGAN.lib.Teco import FRVSR, TecoGAN
 
 from pathlib import Path
-# from numba import cuda
 
 # fix all randomness, except for multi-treading or GPU process
 import tensorflow.contrib.slim as slim
