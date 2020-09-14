@@ -1,10 +1,6 @@
-# from ThirdParty.FeatureFlow.sequence_run import getInterpolationRange
-# from ThirdParty.TecoGAN.lib.Teco import TecoGAN
-# from ThirdParty.TecoGAN.lib.Teco import TecoGAN
+
 from textwrap import indent
-# import numba
 from numpy.lib.utils import info
-# from prompt_toolkit.eventloop import event
 import wx
 from wx import xrc
 import wx.adv
@@ -16,8 +12,6 @@ from wx.xrc import XRCID
 from opencv_operations import FrameRate, CheckResolution
 
 from indexAndRangeGetters import SettersGetterIndex, SettersGetterRange, SettersGetterIteration
-# from numba import cuda
-# from numba.cuda.cudadrv.devices import reset
 import os
 indexObj = SettersGetterIndex()
 rangeObj = SettersGetterRange()
