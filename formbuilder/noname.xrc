@@ -23,10 +23,11 @@
 			</object>
 		</object>
 		<object class="wxBoxSizer">
+			<minsize>-1,0</minsize>
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
-				<option>1</option>
-				<flag>wxEXPAND | wxALL</flag>
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
 				<border>5</border>
 				<object class="wxNotebook" name="mainNotebook">
 					<object class="notebookpage">
@@ -40,19 +41,19 @@
 								<growablecols></growablecols>
 								<growablerows></growablerows>
 								<object class="sizeritem">
-									<cellpos>0,0</cellpos>
+									<cellpos>1,1</cellpos>
 									<cellspan>1,2</cellspan>
 									<flag>wxALL</flag>
 									<border>5</border>
 									<object class="wxStaticText" name="videoSupportLabel">
 										<style>wxALIGN_LEFT</style>
 										<pos>0,0</pos>
-										<label>File Resolution that are Supported from 640x360 and 1280x720</label>
+										<label>File Resolution that are Supported from 640x360 and 1280x720\n(1280x720 are split into 4 sections and stitch back up. \nIf check box is selected, the video will be downscaled to\n640x360 and you can use TecoGan or ESRGAN to scale your video)</label>
 										<wrap>-1</wrap>
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>1,0</cellpos>
+									<cellpos>2,0</cellpos>
 									<cellspan>1,1</cellspan>
 									<flag>wxALL</flag>
 									<border>5</border>
@@ -62,7 +63,7 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>2,0</cellpos>
+									<cellpos>3,0</cellpos>
 									<cellspan>1,1</cellspan>
 									<flag>wxALL</flag>
 									<border>5</border>
@@ -72,7 +73,7 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>2,1</cellpos>
+									<cellpos>3,1</cellpos>
 									<cellspan>1,5</cellspan>
 									<flag>wxALL</flag>
 									<border>5</border>
@@ -85,7 +86,7 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>3,0</cellpos>
+									<cellpos>4,0</cellpos>
 									<cellspan>1,1</cellspan>
 									<flag>wxALL</flag>
 									<border>5</border>
@@ -95,7 +96,7 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>3,1</cellpos>
+									<cellpos>4,1</cellpos>
 									<cellspan>1,4</cellspan>
 									<flag>wxALL</flag>
 									<border>5</border>
@@ -107,7 +108,7 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>5,2</cellpos>
+									<cellpos>6,2</cellpos>
 									<cellspan>1,1</cellspan>
 									<flag>wxALL|wxALIGN_BOTTOM</flag>
 									<border>5</border>
@@ -120,7 +121,7 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>5,1</cellpos>
+									<cellpos>6,1</cellpos>
 									<cellspan>1,1</cellspan>
 									<flag>wxALL|wxALIGN_RIGHT</flag>
 									<border>5</border>
@@ -132,7 +133,7 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>4,1</cellpos>
+									<cellpos>5,1</cellpos>
 									<cellspan>1,3</cellspan>
 									<flag>wxEXPAND</flag>
 									<border>5</border>
@@ -143,25 +144,15 @@
 											<option>0</option>
 											<flag>wxALL</flag>
 											<border>5</border>
-											<object class="wxCheckBox" name="removeDupFrameCB">
-												<tooltip>This will removed any duplicate frames from the input video</tooltip>
-												<label>Remove Duplicate Frame [PLACEHOLDER]</label>
-												<checked>0</checked>
-											</object>
-										</object>
-										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxALL</flag>
-											<border>5</border>
-											<object class="wxCheckBox" name="placeHolder">
-												<label>Do not Interpolate Scene Changes [PLACEHOLDER]</label>
+											<object class="wxCheckBox" name="m_checkBox3">
+												<label>Scale 720p down to 360p</label>
 												<checked>0</checked>
 											</object>
 										</object>
 									</object>
 								</object>
 								<object class="sizeritem">
-									<cellpos>1,1</cellpos>
+									<cellpos>2,1</cellpos>
 									<cellspan>1,1</cellspan>
 									<flag>wxEXPAND</flag>
 									<border>5</border>
@@ -351,7 +342,7 @@
 									<flag>wxALL</flag>
 									<border>5</border>
 									<object class="wxButton" name="esrganRunBtn">
-										<label>Scale Image</label>
+										<label>Run</label>
 										<default>0</default>
 										<markup>0</markup>
 										<bitmap />
@@ -363,14 +354,14 @@
 				</object>
 			</object>
 			<object class="sizeritem">
-				<option>1</option>
-				<flag>wxEXPAND | wxALL</flag>
+				<option>0</option>
+				<flag>wxALL</flag>
 				<border>5</border>
 				<object class="wxNotebook" name="m_notebook2">
 					<object class="notebookpage">
-						<label>Image To Videos</label>
+						<label>Image To Video</label>
 						<selected>0</selected>
-						<object class="wxPanel" name="m_panel6">
+						<object class="wxPanel" name="m_panel5">
 							<style>wxTAB_TRAVERSAL</style>
 							<object class="wxGridBagSizer">
 								<vgap>0</vgap>

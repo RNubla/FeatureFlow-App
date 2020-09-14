@@ -4,3 +4,6 @@
 [submodule "ThirdParty/TecoGAN"]
 	path = ThirdParty/TecoGAN
 	url = https://github.com/RNubla/TecoGAN
+[submodule "ThirdParty/ESRGAN"]
+	path = ThirdParty/ESRGAN
+	url = https://github.com/RNubla/ESRGAN.git
