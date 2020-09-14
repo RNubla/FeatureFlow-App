@@ -16,7 +16,8 @@ from ThirdParty.FeatureFlow.models.bdcn import bdcn
 import shutil
 import json
 ffmpeg_exe = Path.cwd() / 'ffmpeg.exe'
-
+# cpuDevice = torch.device('cpu')
+# gpuDevice = torch.device('gpu')
 class FeatureFlowRunner:
     def __init__(self):
         self.iteration : int
@@ -106,6 +107,7 @@ class FeatureFlowRunner:
         self.output_path = output_path
         self.bdcn = bdcn.BDCN()
         self.bdcn.cuda()
+        # self.bdcn.cpu()
         self.structure_gen = layers.StructureGen(3)
         self.structure_gen.cuda()
         self.detail_enhance = layers.DetailEnhance()
@@ -131,6 +133,10 @@ class FeatureFlowRunner:
         self.bdcn.eval()
         self.structure_gen.eval()
         self.detail_enhance.eval()
+
+        # self.bdcn.to(cpuDevice)
+        # self.structure_gen.to(cpuDevice)
+        # self.detail_enhance.to(cpuDevice)
 
         IE = 0
         PSNR = 0
