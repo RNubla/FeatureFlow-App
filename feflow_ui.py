@@ -1,14 +1,16 @@
 # from ThirdParty.FeatureFlow.sequence_run import getInterpolationRange
 # from ThirdParty.TecoGAN.lib.Teco import TecoGAN
+# from ThirdParty.TecoGAN.lib.Teco import TecoGAN
 from textwrap import indent
-import numba
+# import numba
 from numpy.lib.utils import info
-from prompt_toolkit.eventloop import event
+# from prompt_toolkit.eventloop import event
 import wx
 from wx import xrc
 import wx.adv
 from pathlib import Path
 import threading
+import multiprocessing
 
 from wx.xrc import XRCID
 from opencv_operations import FrameRate, CheckResolution
@@ -20,14 +22,16 @@ import os
 indexObj = SettersGetterIndex()
 rangeObj = SettersGetterRange()
 
-class myThread (threading.Thread):
+# class myThread (threading.Thread):
+class myThread (multiprocessing.Process):
     def __init__(self, threadID, name, inputFile, outputPath, interpNum):
-       threading.Thread.__init__(self)
-       self.threadID = threadID
-       self.name = name
-       self.inputFile = inputFile
-       self.outputPath = outputPath
-       self.interpNum = interpNum
+    #    threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.inputFile = inputFile
+        self.outputPath = outputPath
+        self.interpNum = interpNum
 
     def run(self):
         from feature_flow_interface import Resolution720p, Resolution360p
@@ -47,26 +51,29 @@ class myThread (threading.Thread):
             interpolate720.stitchVideo()
         print ("Exiting " + self.name)
 
-class TecoGANThread(threading.Thread):
+# class TecoGANThread(threading.Thread):
+class TecoGANThread(multiprocessing.Process):
     def __init__(self, threadId, name, inputFile, outputPath):
-        threading.Thread.__init__(self)
+        # threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.threadID = threadId
         self.name = name
         self.inputPath = inputFile
         self.outputPath = outputPath
+        # self._stop_event = threading.Event()
 
     def run(self):
         from tecoGan_runner import TecoGANRunner
         tecoGan = TecoGANRunner()
         tecoGan.RunTeco(self.inputPath, self.outputPath)
-        # cuda.select_device(0)
-        # cuda.close()
-        # cuda.reset()
         print('Done')
 
-class esrGanThread(threading.Thread):
+
+# class esrGanThread(threading.Thread):
+class esrGanThread(multiprocessing.Process):
     def __init__(self, threadId, name, inputFile, outputPath):
-        threading.Thread.__init__(self)
+        # threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.threadID = threadId
         self.name = name
         self.inputPath = inputFile
@@ -79,6 +86,7 @@ class esrGanThread(threading.Thread):
         # cuda.select_device(0)
         # cuda.close()
         print('Done')
+        
 
 class FeFlowApp(wx.App):
     def OnInit(self, ):
@@ -262,16 +270,19 @@ class FeFlowApp(wx.App):
         else:
             fflowThread.start()
             dlg = wx.ProgressDialog('Interpolating Frames', 'Please wait..', style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
-            while fflowThread.isAlive():
+            # while fflowThread.isAlive():
+            while fflowThread.is_alive():
                 wx.MilliSleep(300)
                 dlg.Pulse("Interpolation In Progress {} out of {}".format(indexObj.getInterpolationIndex(),rangeObj.getInterpolationRange()))
                 wx.GetApp().Yield()
                 counter += 1
             del dlg
+        fflowThread.kill()
         fflowThread.join()
         self.completeDialog()
 
     def tecoGanThread(self, event):
+        # import sys
         tecoGan = TecoGANThread(2, "TecoGAN", self.tecoInputPath, self.tecoOutputPath)
         dlg = None
         if self.tecoInputPath == '' and self.tecoOutputPath == '':
@@ -279,13 +290,20 @@ class FeFlowApp(wx.App):
         else:
             tecoGan.start()
             dlg = wx.ProgressDialog('Busy', 'Please wait...', style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
-            while tecoGan.isAlive():
+            # while tecoGan.isAlive():
+            while tecoGan.is_alive():
                 wx.MilliSleep(300)
                 dlg.Pulse('Scaling in Progress')
                 wx.GetApp().Yield()
             del dlg
+        tecoGan.kill()
         tecoGan.join()
+        print(tecoGan.is_alive())
         self.completeDialog()
+        # tecoGan.stop()
+        # tecoGan.stopped()
+        
+        # sys.exit(tecoGan)
 
     def esrGanThread(self, event):
             esrGan = esrGanThread(3, "ESRGAN", self.esrInputPath, self.esrOutputPath)
@@ -295,11 +313,13 @@ class FeFlowApp(wx.App):
             else:
                 esrGan.start()
                 dlg = wx.ProgressDialog('Busy', 'Please wait...', style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
-                while esrGan.isAlive():
+                # while esrGan.isAlive():
+                while esrGan.is_alive():
                     wx.MilliSleep(300)
                     dlg.Pulse('Scaling in Progress')
                     wx.GetApp().Yield()
                 del dlg
+            esrGan.kill()
             esrGan.join()
             self.completeDialog()
 
