@@ -1,28 +1,31 @@
-from unittest import runner
+# from unittest import runner
+# import os, math, time, collections, numpy as np
 import numpy as np
-import os, math, time, collections, numpy as np
+import os, time, numpy as np
 import tensorflow as tf
 from tensorflow.python.util import deprecation
 import random as rn
-import sys, shutil, subprocess
+# import sys, shutil, subprocess
 
 from ThirdParty.TecoGAN.lib.ops import *
-from ThirdParty.TecoGAN.lib.dataloader import inference_data_loader, frvsr_gpu_data_loader
+# from ThirdParty.TecoGAN.lib.dataloader import inference_data_loader, frvsr_gpu_data_loader
+from ThirdParty.TecoGAN.lib.dataloader import inference_data_loader
 from ThirdParty.TecoGAN.lib.frvsr import generator_F, fnet
-from ThirdParty.TecoGAN.lib.Teco import FRVSR, TecoGAN
+# from ThirdParty.TecoGAN.lib.Teco import FRVSR, TecoGAN
 
 from pathlib import Path
 from numba import cuda
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 # fix all randomness, except for multi-treading or GPU process
-os.environ['PYTHONHASHSEED'] = '0'
-np.random.seed(42)
-rn.seed(12345)
-tf.compat.v1.set_random_seed(1234)
 import tensorflow.contrib.slim as slim
 class TecoGANRunner:
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    deprecation._PRINT_DEPRECATION_WARNINGS = False
+    os.environ['PYTHONHASHSEED'] = '0'
+    np.random.seed(42)
+    rn.seed(12345)
+    tf.compat.v1.set_random_seed(1234)
+
     def RunTeco(self, input_dir, output_dir):
 
         # Declare the test data reader
@@ -75,21 +78,8 @@ class TecoGANRunner:
 
         config = tf.compat.v1.ConfigProto()
         config.gpu_options.allow_growth = True
-        output_pre = '/bomb'
-        # output_dir = './results'
-        # output_dir = str(Path.cwd() / 'results')
         output_ext = 'png'
-        output_name = 'output'
         checkpoint = '.\\final-model\\TecoGAN'
-        # if (FLAGS.output_pre == ""):
-        # if (output_pre == ""):
-        #     # image_dir = FLAGS.output_dir
-        #     image_dir = output_dir
-        # else:
-        #     # image_dir = os.path.join(FLAGS.output_dir, FLAGS.output_pre)
-        #     image_dir = os.path.join(output_dir, output_pre)
-        # if not os.path.exists(image_dir):
-        #     os.makedirs(image_dir)
         self.sess = None
         with tf.compat.v1.Session(config=config) as sess1:
             self.sess = sess1
@@ -98,11 +88,7 @@ class TecoGANRunner:
             self.sess.run(local_init_op)
             
             print('Loading weights from ckpt model')
-            # weight_initiallizer.restore(sess, FLAGS.checkpoint)
             weight_initiallizer.restore(self.sess, checkpoint)
-            if False: # If you want to take a look of the weights, True
-                printVariable('generator')
-                printVariable('fnet')
             max_iter = len(inference_data.inputs)
                     
             srtime = 0
@@ -118,10 +104,8 @@ class TecoGANRunner:
                 
                 if(i >= 5): 
                     name, _ = os.path.splitext(os.path.basename(str(inference_data.paths_LR[i])))
-                    # filename = FLAGS.output_name+'_'+name
-                    filename = output_name+'_'+name
+                    filename = name
                     print('saving image %s' % filename)
-                    # out_path = os.path.join(image_dir, "%s.%s"%(filename,FLAGS.output_ext))
                     out_path = str(Path(output_dir) / str(filename)) +'.'+ output_ext
                     print(out_path)
                     save_img(out_path, output_frame[0])
@@ -129,9 +113,11 @@ class TecoGANRunner:
                     print("Warming up %d"%(5-i))
             self.sess.close()
         print( "total time " + str(srtime) + ", frame number " + str(max_iter) )
-        device = cuda.get_current_device()
-        device.reset()
-
+        # cuda.select_device(0)
+        # cuda.close()
+        # device = cuda.get_current_device()
+        # cuda.
+        # cuda.reset()
 # if __name__ == "__main__":
 #     run = TecoGANRunner()
 #     run.RunTeco()
