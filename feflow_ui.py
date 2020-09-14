@@ -17,9 +17,11 @@ indexObj = SettersGetterIndex()
 rangeObj = SettersGetterRange()
 
 # class myThread (threading.Thread):
+
+
 class myThread (multiprocessing.Process):
     def __init__(self, threadID, name, inputFile, outputPath, interpNum):
-    #    threading.Thread.__init__(self)
+        #    threading.Thread.__init__(self)
         multiprocessing.Process.__init__(self)
         self.threadID = threadID
         self.name = name
@@ -31,21 +33,25 @@ class myThread (multiprocessing.Process):
         from feature_flow_interface import Resolution720p, Resolution360p
         index = SettersGetterIndex()
         print('Index: ', index.getInterpolationIndex())
-        print ("Starting " + self.name)
+        print("Starting " + self.name)
 
         resolution = CheckResolution(self.inputFile)
         if resolution.getWidth() < int(1280) and resolution.getHeight() < int(720):
-            interpolate360 = Resolution360p(self.inputFile, self.interpNum, self.outputPath, indexObj, rangeObj)
+            interpolate360 = Resolution360p(
+                self.inputFile, self.interpNum, self.outputPath, indexObj, rangeObj)
             interpolate360.runFeatureFlow()
             # interpolate360.imageToVideo()
         else:
-            interpolate720 = Resolution720p(self.inputFile, self.interpNum, self.outputPath, indexObj, rangeObj)
+            interpolate720 = Resolution720p(
+                self.inputFile, self.interpNum, self.outputPath, indexObj, rangeObj)
             interpolate720.splitVideoIntoSections()
             interpolate720.runFeatureFlow()
             interpolate720.stitchVideo()
-        print ("Exiting " + self.name)
+        print("Exiting " + self.name)
 
 # class TecoGANThread(threading.Thread):
+
+
 class TecoGANThread(multiprocessing.Process):
     def __init__(self, threadId, name, inputFile, outputPath):
         # threading.Thread.__init__(self)
@@ -80,7 +86,7 @@ class esrGanThread(multiprocessing.Process):
         # cuda.select_device(0)
         # cuda.close()
         print('Done')
-        
+
 
 class FeFlowApp(wx.App):
     def OnInit(self, ):
@@ -100,12 +106,12 @@ class FeFlowApp(wx.App):
         self.condition = threading.Condition()
 
         # TECOGAN
-        self.tecoInputPath : str = ''
-        self.tecoOutputPath : str = ''
+        self.tecoInputPath: str = ''
+        self.tecoOutputPath: str = ''
 
         # ESRGAN
-        self.esrInputPath : str = ''
-        self.esrOutputPath : str = ''
+        self.esrInputPath: str = ''
+        self.esrOutputPath: str = ''
 
         self.mainFrame = self.res.LoadFrame(None, 'mainFrame')
         self.mainMenuBar = xrc.XRCCTRL(self.mainFrame, 'mainMenuBar')
@@ -135,32 +141,46 @@ class FeFlowApp(wx.App):
                             self.onSelectOutputDir, id=xrc.XRCID('outputDirPicker'))
 
         self.interpBtn = xrc.XRCCTRL(self.mainFrame, 'interpBtn')
-        self.mainFrame.Bind(wx.EVT_BUTTON, self.applicationThreads, id=xrc.XRCID('interpBtn'))
+        self.mainFrame.Bind(
+            wx.EVT_BUTTON, self.applicationThreads, id=xrc.XRCID('interpBtn'))
 
-        self.imgToVidInputFolder = xrc.XRCCTRL(self.mainFrame, 'imgToVidInputDirPicker')
-        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED, self.onSelectImgToVidInputDir, id=xrc.XRCID('imgToVidInputDirPicker'))
-        
+        self.imgToVidInputFolder = xrc.XRCCTRL(
+            self.mainFrame, 'imgToVidInputDirPicker')
+        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED, self.onSelectImgToVidInputDir, id=xrc.XRCID(
+            'imgToVidInputDirPicker'))
+
         self.imgToVidBtn = xrc.XRCCTRL(self.mainFrame, 'imgToVidBtn')
-        self.mainFrame.Bind(wx.EVT_BUTTON, self.imgToVideo, id=xrc.XRCID('imgToVidBtn'))
+        self.mainFrame.Bind(wx.EVT_BUTTON, self.imgToVideo,
+                            id=xrc.XRCID('imgToVidBtn'))
 
-        self.tecoInputFolderPicker = xrc.XRCCTRL(self.mainFrame, 'tecoInputDirPicker')
-        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED, self.tecoOnSelectInputDir, id=xrc.XRCID('tecoInputDirPicker'))
-        
-        self.tecoOutputFolderPicker = xrc.XRCCTRL(self.mainFrame, 'tecoOutputDirPicker')
-        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED, self.tecoOnselectOutputDir, id=xrc.XRCID('tecoOutputDirPicker'))
+        self.tecoInputFolderPicker = xrc.XRCCTRL(
+            self.mainFrame, 'tecoInputDirPicker')
+        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED,
+                            self.tecoOnSelectInputDir, id=xrc.XRCID('tecoInputDirPicker'))
+
+        self.tecoOutputFolderPicker = xrc.XRCCTRL(
+            self.mainFrame, 'tecoOutputDirPicker')
+        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED,
+                            self.tecoOnselectOutputDir, id=xrc.XRCID('tecoOutputDirPicker'))
 
         self.tecoGanRunBtn = xrc.XRCCTRL(self.mainFrame, 'tecoRunBtn')
-        self.mainFrame.Bind(wx.EVT_BUTTON, self.tecoGanThread, id=xrc.XRCID('tecoRunBtn'))
+        self.mainFrame.Bind(wx.EVT_BUTTON, self.tecoGanThread,
+                            id=xrc.XRCID('tecoRunBtn'))
 
         # ESRGAN
-        self.esrGanInputFolderPicker = xrc.XRCCTRL(self.mainFrame, 'esrganInputDirPicker')
-        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED, self.esrOnSelectInputDir, id=xrc.XRCID('esrganInputDirPicker'))
-        
-        self.esrGanOutputFolderPicker = xrc.XRCCTRL(self.mainFrame, 'esrganOutputDirPicker')
-        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED, self.esrOnselectOutputDir, id=xrc.XRCID('esrganOutputDirPicker'))
+        self.esrGanInputFolderPicker = xrc.XRCCTRL(
+            self.mainFrame, 'esrganInputDirPicker')
+        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED, self.esrOnSelectInputDir, id=xrc.XRCID(
+            'esrganInputDirPicker'))
+
+        self.esrGanOutputFolderPicker = xrc.XRCCTRL(
+            self.mainFrame, 'esrganOutputDirPicker')
+        self.mainFrame.Bind(wx.EVT_DIRPICKER_CHANGED, self.esrOnselectOutputDir, id=xrc.XRCID(
+            'esrganOutputDirPicker'))
 
         self.esrGanRunBtn = xrc.XRCCTRL(self.mainFrame, 'esrganRunBtn')
-        self.mainFrame.Bind(wx.EVT_BUTTON, self.esrGanThread, id=xrc.XRCID('esrganRunBtn'))
+        self.mainFrame.Bind(wx.EVT_BUTTON, self.esrGanThread,
+                            id=xrc.XRCID('esrganRunBtn'))
 
         self.mainFrame.Show()
 
@@ -215,7 +235,7 @@ class FeFlowApp(wx.App):
         path = self.tecoInputFolderPicker.GetPath()
         self.tecoInputPath = path
         print('TecoGan Input Folder: ', self.tecoInputPath)
-    
+
     def tecoOnselectOutputDir(self, event):
         path = self.tecoOutputFolderPicker.GetPath()
         self.tecoOutputPath = path
@@ -225,7 +245,7 @@ class FeFlowApp(wx.App):
         from tecoGan_runner import TecoGANRunner
         tecoGan = TecoGANRunner()
         tecoGan.RunTeco(self.tecoInputPath, self.tecoOutputPath)
-        
+
         print('Done')
 
     # ESRGAN
@@ -233,7 +253,7 @@ class FeFlowApp(wx.App):
         path = self.esrGanInputFolderPicker.GetPath()
         self.esrInputPath = path
         print('ESR Input Folder: ', self.esrInputPath)
-    
+
     def esrOnselectOutputDir(self, event):
         path = self.esrGanOutputFolderPicker.GetPath()
         self.esrOutputPath = path
@@ -245,8 +265,6 @@ class FeFlowApp(wx.App):
         img2Vid = ImgToVid()
         img2Vid.run(self.imgToVideoInputPath, fileName)
 
-
-
     def completeDialog(self):
         wx.MessageBox('Feature Flow has finished interpolating your video. \n Please check your output directory',
                       'Interpolation Complete', wx.OK | wx.ICON_EXCLAMATION)
@@ -256,18 +274,21 @@ class FeFlowApp(wx.App):
                       'Error', wx.OK | wx.ICON_ERROR)
 
     def applicationThreads(self, event):
-        fflowThread = myThread(1, "FeatureFlow", self.inputFile, self.outputPath, self.interpNum)
+        fflowThread = myThread(
+            1, "FeatureFlow", self.inputFile, self.outputPath, self.interpNum)
         dlg = None
         counter = 0
         if self.inputFile == '' and self.outputPath == '':
             self.missingFileDialog()
         else:
             fflowThread.start()
-            dlg = wx.ProgressDialog('Interpolating Frames', 'Please wait..', style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
+            dlg = wx.ProgressDialog('Interpolating Frames', 'Please wait..',
+                                    style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
             # while fflowThread.isAlive():
             while fflowThread.is_alive():
                 wx.MilliSleep(300)
-                dlg.Pulse("Interpolation In Progress {} out of {}".format(indexObj.getInterpolationIndex(),rangeObj.getInterpolationRange()))
+                dlg.Pulse("Interpolation In Progress {} out of {}".format(
+                    indexObj.getInterpolationIndex(), rangeObj.getInterpolationRange()))
                 wx.GetApp().Yield()
                 counter += 1
             del dlg
@@ -277,13 +298,15 @@ class FeFlowApp(wx.App):
 
     def tecoGanThread(self, event):
         # import sys
-        tecoGan = TecoGANThread(2, "TecoGAN", self.tecoInputPath, self.tecoOutputPath)
+        tecoGan = TecoGANThread(
+            2, "TecoGAN", self.tecoInputPath, self.tecoOutputPath)
         dlg = None
         if self.tecoInputPath == '' and self.tecoOutputPath == '':
             self.missingFileDialog()
         else:
             tecoGan.start()
-            dlg = wx.ProgressDialog('Busy', 'Please wait...', style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
+            dlg = wx.ProgressDialog('Busy', 'Please wait...', style=wx.PD_APP_MODAL |
+                                    wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
             # while tecoGan.isAlive():
             while tecoGan.is_alive():
                 wx.MilliSleep(300)
@@ -296,26 +319,29 @@ class FeFlowApp(wx.App):
         self.completeDialog()
         # tecoGan.stop()
         # tecoGan.stopped()
-        
+
         # sys.exit(tecoGan)
 
     def esrGanThread(self, event):
-            esrGan = esrGanThread(3, "ESRGAN", self.esrInputPath, self.esrOutputPath)
-            dlg = None
-            if self.esrInputPath == '' and self.esrInputPath == '':
-                self.missingFileDialog()
-            else:
-                esrGan.start()
-                dlg = wx.ProgressDialog('Busy', 'Please wait...', style=wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
-                # while esrGan.isAlive():
-                while esrGan.is_alive():
-                    wx.MilliSleep(300)
-                    dlg.Pulse('Scaling in Progress')
-                    wx.GetApp().Yield()
-                del dlg
-            esrGan.kill()
-            esrGan.join()
-            self.completeDialog()
+        esrGan = esrGanThread(
+            3, "ESRGAN", self.esrInputPath, self.esrOutputPath)
+        dlg = None
+        if self.esrInputPath == '' and self.esrInputPath == '':
+            self.missingFileDialog()
+        else:
+            esrGan.start()
+            dlg = wx.ProgressDialog('Busy', 'Please wait...', style=wx.PD_APP_MODAL |
+                                    wx.PD_ELAPSED_TIME | wx.PD_CAN_ABORT | wx.STAY_ON_TOP)
+            # while esrGan.isAlive():
+            while esrGan.is_alive():
+                wx.MilliSleep(300)
+                dlg.Pulse('Scaling in Progress')
+                wx.GetApp().Yield()
+            del dlg
+        esrGan.kill()
+        esrGan.join()
+        self.completeDialog()
+
 
 if __name__ == "__main__":
     app = FeFlowApp(False)
